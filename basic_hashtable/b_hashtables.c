@@ -86,10 +86,12 @@ BasicHashTable *create_hash_table(int capacity)
  ****/
 void hash_table_insert(BasicHashTable *ht, char *key, char *value)
 {
-  Pair *pair = create_pair(key, value);
-  int ht_index = hash(key, sizeof(ht));
-  ht->storage = pair;
-  ht->capacity++;
+  Pair *item = create_pair(key, value);
+  int index = hash(item->key, ht->capacity);
+  if (ht->storage[index] != NULL) {
+    printf("Overwriting location %d", index);
+  }
+  ht->storage[index] = item;
 }
 
 /****
@@ -99,7 +101,12 @@ void hash_table_insert(BasicHashTable *ht, char *key, char *value)
  ****/
 void hash_table_remove(BasicHashTable *ht, char *key)
 {
-
+  int index = hash(key, ht->capacity);
+  if (ht->storage[index] == 0) {
+    printf("%s does not exist.", key);
+  } else {
+    ht->storage[index] = 0;
+  }
 }
 
 /****
@@ -109,7 +116,13 @@ void hash_table_remove(BasicHashTable *ht, char *key)
  ****/
 char *hash_table_retrieve(BasicHashTable *ht, char *key)
 {
-  return NULL;
+  int index = hash(key, ht->capacity);
+  if (ht->storage[index] == 0) {
+    return NULL;
+  } else {
+    return ht->storage[index]->value;
+  }
+  
 }
 
 /****
