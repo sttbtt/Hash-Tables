@@ -86,12 +86,16 @@ BasicHashTable *create_hash_table(int capacity)
  ****/
 void hash_table_insert(BasicHashTable *ht, char *key, char *value)
 {
-  Pair *item = create_pair(key, value);
+  Pair *item = create_pair(strdup(key), strdup(value));
+
   int index = hash(item->key, ht->capacity);
   if (ht->storage[index] != NULL) {
     printf("Overwriting location %d", index);
   }
   ht->storage[index] = item;
+  // What do we need to free here?
+  // free(key);
+  // free(value);
 }
 
 /****
@@ -107,6 +111,7 @@ void hash_table_remove(BasicHashTable *ht, char *key)
   } else {
     ht->storage[index] = 0;
   }
+  free(ht->storage[index]);
 }
 
 /****
@@ -132,6 +137,14 @@ char *hash_table_retrieve(BasicHashTable *ht, char *key)
  ****/
 void destroy_hash_table(BasicHashTable *ht)
 {
+  for (int i = 0; i < ht->capacity; i++) {
+    if (ht->storage[i] != NULL) {
+      free(ht->storage[i]->key);
+      free(ht->storage[i]->value);
+      free(ht->storage[i]);
+    }
+  }
+  free(ht->storage);
   free(ht);
 }
 
